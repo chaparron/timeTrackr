@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    image: node:lts
+    container_name: time-trackr-backend
+    volumes:
+      - ./backend:/app/backend
+    working_dir: /app/backend
+    entrypoint: ["/bin/bash", "-c", "npm install && npm run start:dev"]
+    ports:
+      - "3000:3000"
+    networks:
+      - time-trackr-network
+    environment:
+      - NODE_ENV=development
+
+  frontend:
+    image: node:lts
+    container_name: time-trackr-frontend
+    volumes:
+      - ./frontend:/app/frontend
+    working_dir: /app/frontend
+    entrypoint: ["/bin/bash", "-c", "npm install && npm run serve"]
+    ports:
+      - "8080:8080"
+    networks:
+      - time-trackr-network
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+
+networks:
+  time-trackr-network:
+    driver: bridge
