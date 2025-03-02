@@ -2,6 +2,8 @@ services:
   backend:
     image: node:lts
     container_name: time-trackr-backend
+    env_file:
+      - .env
     volumes:
       - ./backend:/app/backend
     working_dir: /app/backend
@@ -34,10 +36,8 @@ services:
   db:
     image: postgres:17.4
     container_name: time-trackr-db
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: time-trackr
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
