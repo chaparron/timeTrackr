@@ -1,6 +1,6 @@
 services:
   backend:
-    image: node:lts
+    image: node:22
     container_name: time-trackr-backend
     env_file:
       - .env
@@ -16,9 +16,10 @@ services:
       - NODE_ENV=development
     depends_on:
       - db
+      - redis
 
   frontend:
-    image: node:lts
+    image: node:22
     container_name: time-trackr-frontend
     volumes:
       - ./frontend:/app/frontend
@@ -45,9 +46,20 @@ services:
     networks:
       - time-trackr-network
 
+  redis:
+    image: redis:latest
+    container_name: time-trackr-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - time-trackr-network
+
 networks:
   time-trackr-network:
     driver: bridge
 
 volumes:
   postgres_data:
+  redis_data:
