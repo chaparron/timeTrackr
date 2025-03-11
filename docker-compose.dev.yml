@@ -1,7 +1,7 @@
 services:
   backend:
     image: node:22
-    container_name: time-trackr-backend
+    container_name: ttback
     env_file:
       - ./backend/.env.dev
     volumes:
@@ -20,7 +20,7 @@ services:
 
   frontend:
     image: node:22
-    container_name: time-trackr-frontend
+    container_name: ttfront
     env_file:
       - ./frontend/.env.dev
     volumes:
@@ -39,7 +39,7 @@ services:
 
   db:
     image: postgres:17.4
-    container_name: time-trackr-db
+    container_name: ttdb
     env_file:
       - ./backend/.env.dev
     ports:
@@ -51,7 +51,7 @@ services:
 
   redis:
     image: redis:latest
-    container_name: time-trackr-redis
+    container_name: ttredis
     ports:
       - "6379:6379"
     volumes:
