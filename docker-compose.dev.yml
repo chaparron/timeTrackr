@@ -3,7 +3,7 @@ services:
     image: node:22
     container_name: time-trackr-backend
     env_file:
-      - .env
+      - ./backend/.env.dev
     volumes:
       - ./backend:/app/backend
     working_dir: /app/backend
@@ -21,10 +21,13 @@ services:
   frontend:
     image: node:22
     container_name: time-trackr-frontend
+    env_file:
+      - ./frontend/.env.dev
     volumes:
       - ./frontend:/app/frontend
+      - ./frontend/.env.dev:/app/frontend/.env
     working_dir: /app/frontend
-    entrypoint: ["/bin/bash", "-c", "npm install && npm run serve"]
+    entrypoint: ["/bin/bash", "-c", "npm install && npm run dev -- --host 0.0.0.0"]
     ports:
       - "5173:5173"
     networks:
@@ -38,7 +41,7 @@ services:
     image: postgres:17.4
     container_name: time-trackr-db
     env_file:
-      - .env
+      - ./backend/.env.dev
     ports:
       - "5432:5432"
     volumes:

@@ -1,0 +1,77 @@
+services:
+  backend:
+    container_name: time-trackr-backend-prod
+    env_file: ./backend/.env.prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+      target: production
+    image: time-trackr-backend-prod
+    expose: 
+      - 3000
+    networks:
+      - time-trackr-network
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthcheck"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    container_name: time-trackr-frontend-prod
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    image: time-trackr-frontend-prod
+    ports:
+      - "80:80"
+    networks:
+      - time-trackr-network
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  db:
+    container_name: time-trackr-db-prod
+    image: postgres:17.4
+    env_file: ./backend/.env.prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - time-trackr-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    container_name: time-trackr-redis-prod
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - time-trackr-network
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+networks:
+  time-trackr-network:
+
+volumes:
+  postgres_data:
+  redis_data:
