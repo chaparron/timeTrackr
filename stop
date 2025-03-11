@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  environment="dev"
+else
+  environment="$1"
+fi
+
+case "$environment" in
+  dev)
+    echo "Stopping development environment..."
+    docker-compose -f docker-compose.dev.yml stop
+    ;;
+  prod)
+    echo "Stopping production environment..."
+    docker-compose -f docker-compose.prod.yml stop
+    ;;
+  all)
+    echo "Stopping development and production environments..."
+    docker-compose -f docker-compose.dev.yml stop
+    docker-compose -f docker-compose.prod.yml stop
+    ;;
+  *)
+    echo "Usage: $0 {dev|prod|all}"
+    exit 1
+    ;;
+esac
