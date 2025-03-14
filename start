@@ -12,6 +12,18 @@ case "$environment" in
     docker-compose -f docker-compose.dev.yml up
     ;;
   prod)
+    if [ ! -f "./.env.prod" ]; then
+      echo "Error: .env.prod not found."
+      exit 1
+    fi
+
+    echo "Copying .env.prod to frontend and backend..."
+    cp ./.env.prod ./frontend/.env.prod
+    cp ./.env.prod ./backend/.env.prod
+
+    echo "Cleaning prod environment..."
+    ./clean prod
+
     echo "Starting production environment..."
     docker-compose -f docker-compose.prod.yml up --build -d
     ;;

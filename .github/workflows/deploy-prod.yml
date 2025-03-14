@@ -1,0 +1,34 @@
+name: Deploy on Push
+
+on:
+  repository_dispatch:
+    types: [trigger-deploy]
+
+jobs:
+  sync-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          
+      - name: Force submodule update
+        run: git submodule update --remote --force
+
+      - name: Run backend tests
+        if: contains(github.event.head_commit.message, 'backend')
+        run: |
+          cd backend
+          npm test
+
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SERVER_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/deployer/timeTrackrProd
+            git pull --recurse-submodules --force
+            ./start prod
