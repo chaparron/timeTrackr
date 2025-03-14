@@ -1,6 +1,12 @@
 name: Deploy on Push
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
   repository_dispatch:
     types: [trigger-deploy]
 
@@ -13,7 +19,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0
           
-      - name: Force submodule update
+      - name: Update submodules
         run: git submodule update --remote --force
 
       - name: Run backend tests
@@ -29,6 +35,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/deployer/timeTrackrProd
+            cd /root/projects/timeTrackrProd
             git pull --recurse-submodules --force
             ./start prod
