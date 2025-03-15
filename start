@@ -12,6 +12,9 @@ case "$environment" in
     docker-compose -f docker-compose.dev.yml up
     ;;
   prod)
+    echo "Pulling latest changes..."
+    git pull --recurse-submodules
+
     if [ ! -f "./.env.prod" ]; then
       echo "Error: .env.prod not found."
       exit 1

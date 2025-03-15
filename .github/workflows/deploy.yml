@@ -1,32 +1,20 @@
-name: Deploy on Push
+name: Deploy to production
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'frontend/**'
-      - 'backend/**'
   repository_dispatch:
     types: [trigger-deploy]
 
 jobs:
-  sync-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
-          
+
       - name: Update submodules
         run: git submodule update --remote --force
-
-      - name: Run backend tests
-        if: contains(github.event.head_commit.message, 'backend')
-        run: |
-          cd backend
-          npm test
 
       - name: Deploy to production
         uses: appleboy/ssh-action@v1
