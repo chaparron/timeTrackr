@@ -20,14 +20,9 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
           revoke: false
-          repositories: 'chaparron/timeTrackr, chaparron/timeTrackr-backend, chaparron/timeTrackr-frontend'
-
-      - name: Set token output
-        id: set-output
-        run: echo "::set-output name=generated_token::${{ steps.generate-token.outputs.token }}"
 
       - name: Debug - Generated token
-        run: echo "Token: ${{ steps.set-output.outputs.generated_token }}"
+        run: 'echo "Token: ${{ steps.generate-token.outputs.token }}"'
 
   deploy:
     needs: prepare
@@ -39,11 +34,10 @@ jobs:
           host: ${{ secrets.PROD_SERVER_IP }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs:
-            GITHUB_TOKEN: ${{ needs.prepare.outputs.app_token }}
           script: |
             set -ex
             PROJECT_DIR="/root/projects/timeTrackrProd"
+            GITHUB_TOKEN="${{ needs.prepare.outputs.app_token }}"
 
             cp "$PROJECT_DIR/.env.prod" /tmp/.env.prod.backup
 
