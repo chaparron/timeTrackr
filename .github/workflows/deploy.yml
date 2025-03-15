@@ -20,7 +20,6 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
           revoke: false
-          permissions: 'contents=write'
           repositories: 'chaparron/timeTrackr, chaparron/timeTrackr-backend, chaparron/timeTrackr-frontend'
 
       - name: Set token output
