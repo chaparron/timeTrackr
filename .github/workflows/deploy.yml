@@ -5,7 +5,7 @@ on:
     types: [trigger-deploy]
 
 jobs:
-  deploy:
+  prepare:
     runs-on: ubuntu-latest
     steps:
       - name: Generate App Token
@@ -16,16 +16,16 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
 
-      - name: Checkout repository and submodules
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ steps.generate-token.outputs.token }}
           submodules: recursive
-          fetch-depth: 0
 
-      - name: Update submodules
-        run: git submodule update --remote --force
-
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to production
         uses: appleboy/ssh-action@v1
         with:
@@ -33,18 +33,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -ex
             PROJECT_DIR="/root/projects/timeTrackrProd"
-            
-            if [ ! -d "$PROJECT_DIR/.git" ]; then
-              echo "Cloning parent repository and submodules..."
-              git clone --recursive https://github.com/chaparron/timeTrackr.git "$PROJECT_DIR"
-              cd "$PROJECT_DIR"
-            else
-              echo "Updating repository..."
-              cd "$PROJECT_DIR"
-              git pull origin main
-              git submodule update --init --remote --force
-            fi
+            GITHUB_TOKEN="${{ secrets.APP_TOKEN }}"
 
+            rm -rf "$PROJECT_DIR" || true
+            git clone --recursive "https://x-access-token:$GITHUB_TOKEN@github.com/chaparron/timeTrackr.git" "$PROJECT_DIR"
+            cd "$PROJECT_DIR"
             chmod +x ./start
             ./start prod
