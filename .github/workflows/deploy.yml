@@ -1,12 +1,8 @@
-name: Deploy to production
-
-on:
-  repository_dispatch:
-    types: [trigger-deploy]
-
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    outputs:
+      app_token: ${{ steps.generate-token.outputs.token }}
     steps:
       - name: Generate App Token
         id: generate-token
@@ -35,7 +31,7 @@ jobs:
           script: |
             set -ex
             PROJECT_DIR="/root/projects/timeTrackrProd"
-            GITHUB_TOKEN="${{ secrets.APP_TOKEN }}"
+            GITHUB_TOKEN="${{ needs.prepare.outputs.app_token }}"
 
             rm -rf "$PROJECT_DIR" || true
             git clone --recursive "https://x-access-token:$GITHUB_TOKEN@github.com/chaparron/timeTrackr.git" "$PROJECT_DIR"
