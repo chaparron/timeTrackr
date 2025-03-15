@@ -18,11 +18,8 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          submodules: recursive
+      - name: Debug Token
+        run: echo "Token length: ${#steps.generate-token.outputs.token}"
 
   deploy:
     needs: prepare
@@ -39,8 +36,16 @@ jobs:
             PROJECT_DIR="/root/projects/timeTrackrProd"
             GITHUB_TOKEN="${{ needs.prepare.outputs.app_token }}"
 
-            rm -rf "$PROJECT_DIR" || true
-            git clone --recursive "https://x-access-token:$GITHUB_TOKEN@github.com/chaparron/timeTrackr.git" "$PROJECT_DIR"
+            cp "$PROJECT_DIR/.env.prod" /tmp/.env.prod.backup
+
+            cd "$PROJECT_DIR"
+            git config --global url."https://x-access-token:$GITHUB_TOKEN@github.com".insteadOf "https://github.com"
+            git pull origin main
+            git submodule sync
+            git submodule update --init --remote --force
+
+            mv "/tmp/.env.prod.backup" "$PROJECT_DIR/.env.prod"
+
             cd "$PROJECT_DIR"
             chmod +x ./start
             ./start prod
