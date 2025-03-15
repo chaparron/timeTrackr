@@ -1,6 +1,6 @@
 [submodule "backend"]
 	path = backend
-	url = https://github.com/chaparron/timeTrackr-backend
+	url = git@github.com:chaparron/timeTrackr-backend.git
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/chaparron/timeTrackr-frontend
+	url = git@github.com:chaparron/timeTrackr-frontend.git
