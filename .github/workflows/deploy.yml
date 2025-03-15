@@ -34,10 +34,11 @@ jobs:
           host: ${{ secrets.PROD_SERVER_IP }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs:
+            GITHUB_TOKEN: ${{ needs.prepare.outputs.app_token }}
           script: |
             set -ex
             PROJECT_DIR="/root/projects/timeTrackrProd"
-            GITHUB_TOKEN="${{ needs.prepare.outputs.app_token }}"
 
             cp "$PROJECT_DIR/.env.prod" /tmp/.env.prod.backup
 
