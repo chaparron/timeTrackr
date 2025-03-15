@@ -18,6 +18,10 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
+          revoke: false
+
+      - name: Debug - Token generado
+        run: echo "Token: ${{ steps.generate-token.outputs.token }}"
 
   deploy:
     needs: prepare
