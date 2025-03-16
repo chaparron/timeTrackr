@@ -6,8 +6,17 @@ else
   environment="$1"
 fi
 
+echo "Initializing and updating submodules..."
+git submodule init
+git submodule update --recursive
+
 case "$environment" in
   dev)
+
+    echo "Copying .env to frontend and backend..."
+    cp ./.env.dev ./frontend/.env.dev
+    cp ./.env.dev ./backend/.env.dev
+
     echo "Starting development environment..."
     docker-compose -f docker-compose.dev.yml up
     ;;
