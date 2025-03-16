@@ -17,6 +17,7 @@ The application is built using a **hexagonal architecture** to ensure modularity
 - **Swagger Documentation**: Auto-generated API documentation for easy testing and integration.
 - **TypeORM**: Database abstraction with support for PostgreSQL and in-memory repositories for testing.
 - **Validation**: Robust request validation using `class-validator` and `class-transformer`.
+- **Redis**: Used for caching frequently accessed data, improving application performance.
 
 ### Frontend
 - **Vue.js**: A progressive JavaScript framework for building user interfaces.
@@ -24,6 +25,7 @@ The application is built using a **hexagonal architecture** to ensure modularity
 ### Infrastructure
 - **Docker Compose**: Simplifies local development and ensures consistency across environments.
 - **PostgreSQL**: A powerful, open-source relational database for persistent data storage.
+- **Nginx**: Serves the Vue.js frontend and acts as a reverse proxy for the NestJS backend API.
 
 ---
 
@@ -42,34 +44,29 @@ The application is built using a **hexagonal architecture** to ensure modularity
    cd time-trackr
    ```
 
-2. Copy .env-test into .env in timeTrackr and timeTrackr/backend
-
-3. Start the aplication using Docker Compose:
+2. Start the aplication using script:
    ```bash
-   docker-compose up
+   ./start
    ```
 
 - This will:
-  - Spin up a PostgreSQL database.
-  - Start the NestJS backend on port 3000.
-  - Start the Vue.js frontend on port 8080.
+  - Initialize and update Git submodules.
+  - Start Docker containers defined in docker-compose.dev.yml
+  - Includes:
+    - NestJS backend on port 3000.
+    - Vue.js frontend on port 5173.
+    - PostgreSQL database on port 5432.
 
-4. Access the application:
+3. Access the application:
 
 - Backend API: http://localhost:3000
-- Swagger UI: http://localhost:3000/api
-- Frontend: http://localhost:8080
-
-5. Docker compose services
-
-- **backend** - NestJS: 3000
-- **frontend** - Vue.js: 8080
-- **db** - PostgreSQL: 5432
+- Swagger UI: http://localhost:3000/api-docs
+- Frontend: http://localhost:5173
 
 
 ## Api Documentation
 The backend API is documented using Swagger. After starting the application, you can access the Swagger UI at:
 
    ```bash
-   http://localhost:3000/api
+   http://localhost:3000/api-docs
    ```
